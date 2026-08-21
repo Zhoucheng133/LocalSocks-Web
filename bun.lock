@@ -4,10 +4,7 @@
     "": {
       "name": "localsocks_web",
       "dependencies": {
-        "@emotion/react": "^11.14.0",
-        "@emotion/styled": "^11.14.1",
         "@mui/icons-material": "^9.3.1",
-        "@mui/material": "^9.3.1",
         "@tailwindcss/vite": "^4.3.3",
         "axios": "^1.19.0",
         "jotai": "^2.20.2",
