@@ -27,17 +27,17 @@ export default function Register() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-slate-50 via-indigo-50 to-blue-100 px-4">
       <div className="w-full max-w-md">
-        <div className="mb-8 flex flex-col items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-linear-to-br from-indigo-500 to-blue-600 shadow-lg shadow-indigo-200">
-            <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18zm0 0c2.5-2.5 4-5.5 4-9a13.3 13.3 0 00-4-9m0 18c-2.5-2.5-4-5.5-4-9a13.3 13.3 0 014-9" />
-            </svg>
-          </div>
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Create Account</h1>
-          <p className="text-sm text-slate-500">Sign up to get started with LocalSocks</p>
-        </div>
-
         <div className="rounded-2xl border border-slate-200/70 bg-white p-8 shadow-xl shadow-slate-200/60">
+          <div className="mb-8 flex flex-col gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-linear-to-br from-indigo-500 to-blue-600 shadow-lg shadow-indigo-200">
+              <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18zm0 0c2.5-2.5 4-5.5 4-9a13.3 13.3 0 00-4-9m0 18c-2.5-2.5-4-5.5-4-9a13.3 13.3 0 014-9" />
+              </svg>
+            </div>
+            <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Create Account</h1>
+            <p className="text-sm text-slate-500">Sign up to get started with LocalSocks</p>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-5" noValidate>
             {error && (
               <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">{error}</div>
