@@ -1,7 +1,7 @@
 import { Route, Routes } from 'react-router'
 import Dashboard from './pages/Dashboard'
 import Login from './pages/Login'
-import Register from './pages/Resgiter'
+import Register from './pages/Register'
 
 export default function App() {
   return (
