@@ -13,11 +13,11 @@ export default function Register() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!username.trim() || !password) {
-      setError('请填写完整信息')
+      setError('Please fill in all fields')
       return
     }
     if (password !== confirmPassword) {
-      setError('两次输入的密码不一致')
+      setError('Passwords do not match')
       return
     }
     setError('')
@@ -33,8 +33,8 @@ export default function Register() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18zm0 0c2.5-2.5 4-5.5 4-9a13.3 13.3 0 00-4-9m0 18c-2.5-2.5-4-5.5-4-9a13.3 13.3 0 014-9" />
             </svg>
           </div>
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">创建账户</h1>
-          <p className="text-sm text-slate-500">注册以开始使用 LocalSocks</p>
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Create Account</h1>
+          <p className="text-sm text-slate-500">Sign up to get started with LocalSocks</p>
         </div>
 
         <div className="rounded-2xl border border-slate-200/70 bg-white p-8 shadow-xl shadow-slate-200/60">
@@ -45,7 +45,7 @@ export default function Register() {
 
             <div>
               <label htmlFor="username" className="mb-1.5 block text-sm font-medium text-slate-700">
-                用户名
+                Username
               </label>
               <input
                 id="username"
@@ -53,14 +53,14 @@ export default function Register() {
                 autoComplete="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="请输入用户名"
+                placeholder="Input a username"
                 className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
               />
             </div>
 
             <div>
               <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-slate-700">
-                密码
+                Password
               </label>
               <div className="relative">
                 <input
@@ -69,14 +69,14 @@ export default function Register() {
                   autoComplete="new-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="至少 8 位字符"
+                  placeholder="At least 8 characters"
                   className="w-full rounded-lg border border-slate-300 px-4 py-2.5 pr-11 text-sm text-slate-900 placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 right-0 flex items-center px-3 text-slate-400 transition hover:text-slate-600"
-                  aria-label={showPassword ? '隐藏密码' : '显示密码'}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? (
                     <VisibilityOff sx={{ fontSize: 20 }} />
@@ -89,7 +89,7 @@ export default function Register() {
 
             <div>
               <label htmlFor="confirmPassword" className="mb-1.5 block text-sm font-medium text-slate-700">
-                确认密码
+                Confirm Password
               </label>
               <input
                 id="confirmPassword"
@@ -97,7 +97,7 @@ export default function Register() {
                 autoComplete="new-password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="请再次输入密码"
+                placeholder="Re-enter your password"
                 className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
               />
             </div>
@@ -106,12 +106,10 @@ export default function Register() {
               type="submit"
               className="w-full rounded-lg bg-indigo-600 py-2.5 text-sm font-medium text-white shadow-sm shadow-indigo-200 transition hover:bg-indigo-500 focus:ring-2 focus:ring-indigo-500/40 focus:ring-offset-2 focus:outline-none active:bg-indigo-700"
             >
-              注 册
+              Sign Up
             </button>
           </form>
         </div>
-
-        <p className="mt-6 text-center text-xs text-slate-400">© {new Date().getFullYear()} LocalSocks</p>
       </div>
     </div>
   )

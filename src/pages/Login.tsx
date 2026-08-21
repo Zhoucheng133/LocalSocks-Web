@@ -12,7 +12,7 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!username.trim() || !password) {
-      setError('请填写用户名和密码')
+      setError('Please enter your username and password')
       return
     }
     setError('')
@@ -29,7 +29,7 @@ export default function Login() {
             </svg>
           </div>
           <h1 className="text-2xl font-semibold tracking-tight text-slate-900">LocalSocks</h1>
-          <p className="text-sm text-slate-500">欢迎回来，请登录您的账户</p>
+          <p className="text-sm text-slate-500">Welcome back, please sign in to your account</p>
         </div>
 
         <div className="rounded-2xl border border-slate-200/70 bg-white p-8 shadow-xl shadow-slate-200/60">
@@ -40,7 +40,7 @@ export default function Login() {
 
             <div>
               <label htmlFor="username" className="mb-1.5 block text-sm font-medium text-slate-700">
-                用户名
+                Username
               </label>
               <input
                 id="username"
@@ -48,14 +48,14 @@ export default function Login() {
                 autoComplete="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="请输入用户名"
+                placeholder="Enter your username"
                 className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
               />
             </div>
 
             <div>
               <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-slate-700">
-                密码
+                Password
               </label>
               <div className="relative">
                 <input
@@ -71,7 +71,7 @@ export default function Login() {
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 right-0 flex items-center px-3 text-slate-400 transition hover:text-slate-600"
-                  aria-label={showPassword ? '隐藏密码' : '显示密码'}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? (
                     <VisibilityOff sx={{ fontSize: 20 }} />
@@ -82,26 +82,14 @@ export default function Login() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between text-sm">
-              <label className="flex cursor-pointer items-center gap-2 text-slate-600 select-none">
-                <input
-                  type="checkbox"
-                  className="h-4 w-4 rounded border-slate-300 text-indigo-600 accent-indigo-600"
-                />
-                记住我
-              </label>
-            </div>
-
             <button
               type="submit"
               className="w-full rounded-lg bg-indigo-600 py-2.5 text-sm font-medium text-white shadow-sm shadow-indigo-200 transition hover:bg-indigo-500 focus:ring-2 focus:ring-indigo-500/40 focus:ring-offset-2 focus:outline-none active:bg-indigo-700"
             >
-              登 录
+              Sign In
             </button>
           </form>
         </div>
-
-        <p className="mt-6 text-center text-xs text-slate-400">© {new Date().getFullYear()} LocalSocks</p>
       </div>
     </div>
   )
