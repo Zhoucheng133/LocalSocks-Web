@@ -2,12 +2,11 @@ import axios, { type AxiosRequestConfig } from "axios";
 import { useEffect, useState } from "react";
 import type { RequestResponse } from "../utils/types";
 import { requestWithToken, store, tokenAtom } from "../utils/requests";
-import { useLocation, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 
 export default function AuthProvider({ children } : {children: React.ReactNode}){
   const [loading,setLoading] = useState(true)
   const navigate = useNavigate();
-  const location = useLocation();
 
   const initFunc=async ()=>{
     const initResponse=(await axios.get('/api/init')).data as RequestResponse;
