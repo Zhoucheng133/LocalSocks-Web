@@ -19,7 +19,6 @@ export async function initFunc(navigate: NavigateFunction){
     method: "GET",
     url: "/api/auth",
   } as AxiosRequestConfig)
-  console.log(authOk);
   
   if(authOk.ok){
     navigate("/", {replace: true});
