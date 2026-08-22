@@ -11,6 +11,7 @@ export async function login(username: string, password: string): Promise<Request
   const response = (await axios.post("/api/login", { username, password })).data as RequestResponse;
   if (response.ok) {
     store.set(tokenAtom, response.data);
+    localStorage.setItem("token", response.data);
   }
   return response;
 }
@@ -41,6 +42,7 @@ export async function requestWithToken(request: AxiosRequestConfig): Promise<Req
         const tokenResponse = (await promise).data as RequestResponse;
         if(tokenResponse.ok){
           store.set(tokenAtom,tokenResponse.data);
+          localStorage.setItem("token",tokenResponse.data);
         }
       } finally {
         store.set(refreshLockAtom, null);
