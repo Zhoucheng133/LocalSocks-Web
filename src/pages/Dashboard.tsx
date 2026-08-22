@@ -134,7 +134,7 @@ export default function Dashboard() {
         {/* Header */}
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <img src="/icon.svg" className='flex h-11 w-11 items-center justify-center' />
+            <img src="/icon.svg" className='flex h-11 w-11 items-center justify-center' draggable={false} />
             <div>
               <h1 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">LocalSocks</h1>
               <p className="text-xs text-slate-500 dark:text-slate-400">Manage your proxy configs</p>

@@ -39,7 +39,7 @@ export default function Register() {
       <div className="w-full max-w-md">
         <div className="rounded-2xl border border-slate-200/70 bg-white p-8 shadow-xl shadow-slate-200/60 dark:border-slate-800 dark:bg-slate-900 dark:shadow-black/40">
           <div className="mb-8 flex flex-col gap-3">
-            <img src="/icon.svg" className="flex h-12 w-12" />
+            <img src="/icon.svg" className="flex h-12 w-12" draggable={false} />
             <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">Create Account</h1>
             <p className="text-sm text-slate-500 dark:text-slate-400">Sign up to get started with LocalSocks</p>
           </div>
