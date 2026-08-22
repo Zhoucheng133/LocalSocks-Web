@@ -4,6 +4,7 @@ import { atom, getDefaultStore } from "jotai";
 
 export const store = getDefaultStore();
 export const refreshLockAtom = atom<Promise<any> | null>(null);
+export const tokenLockAtom = atom<Promise<any> | null>(null);
 
 export const tokenAtom = atom("")
 
@@ -21,6 +22,9 @@ export async function register(username: string, password: string): Promise<Requ
 }
 
 export async function requestWithToken(request: AxiosRequestConfig): Promise<RequestResponse>{
+
+  const tokenLock=store.get(tokenLockAtom);
+  await tokenLock;
 
   const requestData = (await axios({
     ...request,
