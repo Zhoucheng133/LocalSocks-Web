@@ -141,7 +141,7 @@ export default function Dashboard() {
             </div>
             <div>
               <h1 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">LocalSocks</h1>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Manage your proxy servers</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Manage your proxy configs</p>
             </div>
           </div>
 
@@ -159,7 +159,7 @@ export default function Dashboard() {
               className="flex items-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm shadow-indigo-200 transition hover:bg-indigo-500 active:bg-indigo-700 dark:shadow-indigo-950/50"
             >
               <AddIcon sx={{ fontSize: 18 }} />
-              Add Server
+              Add Config
             </button>
           </div>
         </div>
@@ -183,7 +183,7 @@ export default function Dashboard() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3m3 3a3 3 0 100 6h13.5a3 3 0 100-6m-16.5-3a3 3 0 013-3h13.5a3 3 0 013 3m-19.5 0v-.75a2.25 2.25 0 01-2.25-2.25V6A2.25 2.25 0 015.25 3.75h13.5A2.25 2.25 0 0121 6v2.25a2.25 2.25 0 01-2.25 2.25v.75" />
               </svg>
               <p className="text-sm font-medium text-slate-600 dark:text-slate-300">No servers yet</p>
-              <p className="text-xs text-slate-400 dark:text-slate-500">Click "Add Server" to create your first server.</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500">Click "Add Config" to create your first config.</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -248,7 +248,7 @@ export default function Dashboard() {
           <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={closeDialog} />
           <div className="relative w-full max-w-md animate-[fadeIn_0.15s_ease-out] rounded-2xl border border-slate-200/70 bg-white p-8 shadow-2xl dark:border-slate-800 dark:bg-slate-900">
             <h2 className="mb-6 text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
-              {dialogMode === 'add' ? 'Add Server' : 'Edit Server'}
+              {dialogMode === 'add' ? 'Add Config' : 'Edit Config'}
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-4" noValidate>
@@ -265,7 +265,7 @@ export default function Dashboard() {
                   type="text"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  placeholder="My server"
+                  placeholder="My config"
                   className={inputClass}
                 />
               </div>
