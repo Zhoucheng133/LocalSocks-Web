@@ -2,11 +2,12 @@ import axios, { type AxiosRequestConfig } from "axios";
 import { useEffect, useState } from "react";
 import type { RequestResponse } from "../utils/types";
 import { requestWithToken, store, tokenAtom } from "../utils/requests";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 
 export default function AuthProvider({ children } : {children: React.ReactNode}){
   const [loading,setLoading] = useState(true)
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const initFunc=async ()=>{
     const initResponse=(await axios.get('/api/init')).data as RequestResponse;
@@ -28,11 +29,14 @@ export default function AuthProvider({ children } : {children: React.ReactNode})
     } as AxiosRequestConfig)
     
     if(authOk.ok){
-      navigate("/", {replace: true});
+      setLoading(false);
+      return;
     }else{
+      localStorage.clear();
+      store.set(tokenAtom, "");
       navigate("/login", {replace: true});
+      setLoading(false);
     }
-    setLoading(false);
   }
 
   useEffect(()=>{
