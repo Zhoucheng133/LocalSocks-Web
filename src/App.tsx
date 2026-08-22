@@ -1,10 +1,12 @@
-import { Route, Routes } from 'react-router'
+import { Route, Routes, useNavigate } from 'react-router'
 import Dashboard from './pages/Dashboard'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import { useEffect } from 'react'
+import { initFunc } from './utils/auth'
 
 export default function App() {
+  const navigate = useNavigate()
 
   function toggleDark(dark: boolean){
     const html = document.documentElement; 
@@ -41,6 +43,10 @@ export default function App() {
       );
     };
   }, []);
+
+  useEffect(() => {
+    initFunc(navigate);
+  }, [navigate])
 
   return (
     <Routes>
