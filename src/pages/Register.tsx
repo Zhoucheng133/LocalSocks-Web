@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
+import { register } from '../utils/requests'
 
 export default function Register() {
   const navigate = useNavigate()
@@ -10,7 +11,7 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault()
     if (!username.trim() || !password) {
       setError('Please fill in all fields')
@@ -21,7 +22,16 @@ export default function Register() {
       return
     }
     setError('')
-    navigate('/dashboard')
+    try {
+      const response = await register(username, password)
+      if (response.ok) {
+        navigate('/login')
+      } else {
+        setError(response.data)
+      }
+    } catch {
+      setError('Registration failed, please try again')
+    }
   }
 
   return (

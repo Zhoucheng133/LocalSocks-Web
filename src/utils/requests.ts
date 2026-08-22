@@ -7,6 +7,18 @@ export const refreshLockAtom = atom<Promise<any> | null>(null);
 
 export const tokenAtom = atom("")
 
+export async function login(username: string, password: string): Promise<RequestResponse> {
+  const response = (await axios.post("/api/login", { username, password })).data as RequestResponse;
+  if (response.ok) {
+    store.set(tokenAtom, response.data);
+  }
+  return response;
+}
+
+export async function register(username: string, password: string): Promise<RequestResponse> {
+  return (await axios.post("/api/register", { username, password })).data as RequestResponse;
+}
+
 export async function requestWithToken(request: AxiosRequestConfig): Promise<RequestResponse>{
 
   const requestData = (await axios({

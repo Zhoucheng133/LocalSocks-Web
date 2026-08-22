@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
+import { login } from '../utils/requests'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -9,14 +10,23 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault()
     if (!username.trim() || !password) {
       setError('Please enter your username and password')
       return
     }
     setError('')
-    navigate('/dashboard')
+    try {
+      const response = await login(username, password)
+      if (response.ok) {
+        navigate('/dashboard')
+      } else {
+        setError(response.data)
+      }
+    } catch {
+      setError('Login failed, please try again')
+    }
   }
 
   return (
