@@ -4,6 +4,7 @@ import {
   DeleteOutlined as DeleteOutlineIcon,
   EditOutlined as EditOutlinedIcon,
   RefreshOutlined as RefreshOutlinedIcon,
+  TuneRounded
 } from '@mui/icons-material'
 import type { Server } from '../utils/types'
 import { requestWithToken } from '../utils/requests'
@@ -175,9 +176,7 @@ export default function Dashboard() {
             </div>
           ) : servers.length === 0 ? (
             <div className="flex flex-col items-center gap-2 px-6 py-16 text-center">
-              <svg className="h-10 w-10 text-slate-300 dark:text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3m3 3a3 3 0 100 6h13.5a3 3 0 100-6m-16.5-3a3 3 0 013-3h13.5a3 3 0 013 3m-19.5 0v-.75a2.25 2.25 0 01-2.25-2.25V6A2.25 2.25 0 015.25 3.75h13.5A2.25 2.25 0 0121 6v2.25a2.25 2.25 0 01-2.25 2.25v.75" />
-              </svg>
+              <TuneRounded className='h-10! w-10!' />
               <p className="text-sm font-medium text-slate-600 dark:text-slate-300">No config yet</p>
               <p className="text-xs text-slate-400 dark:text-slate-500">Click "Add Config" to create your first config.</p>
             </div>
