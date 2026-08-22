@@ -134,11 +134,7 @@ export default function Dashboard() {
         {/* Header */}
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-linear-to-br from-indigo-500 to-blue-600 shadow-lg shadow-indigo-200 dark:shadow-indigo-500/20">
-              <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18zm0 0c2.5-2.5 4-5.5 4-9a13.3 13.3 0 00-4-9m0 18c-2.5-2.5-4-5.5-4-9a13.3 13.3 0 014-9" />
-              </svg>
-            </div>
+            <img src="/icon.svg" className='flex h-11 w-11 items-center justify-center' />
             <div>
               <h1 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">LocalSocks</h1>
               <p className="text-xs text-slate-500 dark:text-slate-400">Manage your proxy configs</p>
@@ -182,7 +178,7 @@ export default function Dashboard() {
               <svg className="h-10 w-10 text-slate-300 dark:text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3m3 3a3 3 0 100 6h13.5a3 3 0 100-6m-16.5-3a3 3 0 013-3h13.5a3 3 0 013 3m-19.5 0v-.75a2.25 2.25 0 01-2.25-2.25V6A2.25 2.25 0 015.25 3.75h13.5A2.25 2.25 0 0121 6v2.25a2.25 2.25 0 01-2.25 2.25v.75" />
               </svg>
-              <p className="text-sm font-medium text-slate-600 dark:text-slate-300">No servers yet</p>
+              <p className="text-sm font-medium text-slate-600 dark:text-slate-300">No config yet</p>
               <p className="text-xs text-slate-400 dark:text-slate-500">Click "Add Config" to create your first config.</p>
             </div>
           ) : (

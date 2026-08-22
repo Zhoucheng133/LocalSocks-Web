@@ -39,11 +39,7 @@ export default function Register() {
       <div className="w-full max-w-md">
         <div className="rounded-2xl border border-slate-200/70 bg-white p-8 shadow-xl shadow-slate-200/60 dark:border-slate-800 dark:bg-slate-900 dark:shadow-black/40">
           <div className="mb-8 flex flex-col gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-linear-to-br from-indigo-500 to-blue-600 shadow-lg shadow-indigo-200 dark:shadow-indigo-500/20">
-              <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18zm0 0c2.5-2.5 4-5.5 4-9a13.3 13.3 0 00-4-9m0 18c-2.5-2.5-4-5.5-4-9a13.3 13.3 0 014-9" />
-              </svg>
-            </div>
+            <img src="/icon.svg" className="flex h-12 w-12" />
             <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">Create Account</h1>
             <p className="text-sm text-slate-500 dark:text-slate-400">Sign up to get started with LocalSocks</p>
           </div>
