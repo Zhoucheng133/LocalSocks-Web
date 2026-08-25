@@ -169,8 +169,39 @@ export default function Dashboard() {
   const anyRunning = servers.some((s) => s.running)
 
   const [certLoading, setCertLoading] = useState(false)
+  const [certRemain, setCertRemain] = useState<number | null>(null)
   const [fingerprintLoading, setFingerprintLoading] = useState(false)
   const [fingerprintDialog, setFingerprintDialog] = useState<string | null>(null)
+
+  function formatRemain(seconds: number): string {
+    const d = Math.floor(seconds / 86400)
+    const h = Math.floor((seconds % 86400) / 3600)
+    const m = Math.floor((seconds % 3600) / 60)
+    if (d > 0) return `${d}d ${h}h`
+    if (h > 0) return `${h}h ${m}m`
+    return `${m}m`
+  }
+
+  const fetchCertRemain = useCallback(async () => {
+    try {
+      const response = await requestWithToken({ method: 'GET', url: '/api/server/remain' })
+      if (response.ok) {
+        setCertRemain(Number(response.data))
+      }
+    } catch {
+      // ignore
+    }
+  }, [])
+
+  useEffect(() => {
+    if (anyRunning) {
+      fetchCertRemain()
+      const timer = setInterval(fetchCertRemain, 60_000)
+      return () => clearInterval(timer)
+    } else {
+      setCertRemain(null)
+    }
+  }, [anyRunning, fetchCertRemain])
 
   async function handleDownloadCert() {
     setCertLoading(true)
@@ -215,56 +246,67 @@ export default function Dashboard() {
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-indigo-50 to-blue-100 px-4 py-10 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950/40">
       <div className="mx-auto w-full max-w-4xl">
         {/* Header */}
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <img src="/icon.svg" className='flex h-11 w-11 items-center justify-center' draggable={false} />
-            <div>
-              <h1 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">LocalSocks</h1>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Manage your proxy configs</p>
+        <div className="mb-6">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <img src="/icon.svg" className='flex h-9 w-9 shrink-0 items-center justify-center sm:h-11 sm:w-11' draggable={false} />
+              <div>
+                <h1 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white sm:text-xl">LocalSocks</h1>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 sm:text-xs">Manage your proxy configs</p>
+              </div>
             </div>
-          </div>
 
-          <div className="flex items-center gap-2">
             <button
               onClick={handleRefresh}
               disabled={loading}
-              className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:text-indigo-600 hover:shadow disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-400 dark:hover:text-indigo-400"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:text-indigo-600 hover:shadow disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-400 dark:hover:text-indigo-400 sm:h-10 sm:w-10"
               aria-label="Refresh"
             >
               <RefreshOutlinedIcon sx={{ fontSize: 18 }} />
             </button>
+          </div>
+
+          <div className="mt-3 flex flex-wrap items-center gap-2">
             <button
               onClick={openAdd}
-              className="flex items-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm shadow-indigo-200 transition hover:bg-indigo-500 active:bg-indigo-700 dark:shadow-indigo-950/50"
+              className="flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-2 text-sm font-medium text-white shadow-sm shadow-indigo-200 transition hover:bg-indigo-500 active:bg-indigo-700 dark:shadow-indigo-950/50 sm:px-4 sm:py-2.5"
             >
               <AddIcon sx={{ fontSize: 18 }} />
-              Add Config
+              <span className="hidden sm:inline">Add Config</span>
+              <span className="sm:hidden">Add</span>
             </button>
             {anyRunning && (
               <>
+                {certRemain !== null && (
+                  <span className="flex items-center gap-1.5 rounded-lg border border-slate-200 px-2.5 py-2 text-xs font-medium text-slate-500 dark:border-slate-700 dark:text-slate-400 sm:px-3 sm:py-2.5">
+                    <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${certRemain < 86400 ? 'bg-amber-500' : 'bg-emerald-500'}`} />
+                    <span className="hidden sm:inline">Cert: </span>
+                    {formatRemain(certRemain)}
+                  </span>
+                )}
                 <button
                   onClick={handleDownloadCert}
                   disabled={certLoading}
-                  className="flex items-center gap-1.5 rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+                  className="flex items-center gap-1.5 rounded-lg border border-slate-200 px-2.5 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 sm:px-4 sm:py-2.5"
                 >
                   {certLoading ? (
                     <span className="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-indigo-600" />
                   ) : (
                     <FileDownloadOutlined sx={{ fontSize: 18 }} />
                   )}
-                  Cert
+                  <span className="hidden sm:inline">Cert</span>
                 </button>
                 <button
                   onClick={handleGetFingerprint}
                   disabled={fingerprintLoading}
-                  className="flex items-center gap-1.5 rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+                  className="flex items-center gap-1.5 rounded-lg border border-slate-200 px-2.5 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 sm:px-4 sm:py-2.5"
                 >
                   {fingerprintLoading ? (
                     <span className="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-indigo-600" />
                   ) : (
                     <Fingerprint sx={{ fontSize: 18 }} />
                   )}
-                  Fingerprint
+                  <span className="hidden sm:inline">Fingerprint</span>
                 </button>
               </>
             )}
