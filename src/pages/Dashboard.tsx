@@ -1,15 +1,18 @@
 import { useCallback, useEffect, useState } from 'react'
+import axios from 'axios'
 import {
   Add as AddIcon,
   DeleteOutlined as DeleteOutlineIcon,
   EditOutlined as EditOutlinedIcon,
+  FileDownloadOutlined,
+  Fingerprint,
   PlayArrowOutlined,
   RefreshOutlined as RefreshOutlinedIcon,
   StopOutlined,
   TuneRounded
 } from '@mui/icons-material'
 import type { Server } from '../utils/types'
-import { requestWithToken } from '../utils/requests'
+import { requestWithToken, store, tokenAtom } from '../utils/requests'
 
 interface ServerForm {
   name: string
@@ -165,6 +168,49 @@ export default function Dashboard() {
 
   const anyRunning = servers.some((s) => s.running)
 
+  const [certLoading, setCertLoading] = useState(false)
+  const [fingerprintLoading, setFingerprintLoading] = useState(false)
+  const [fingerprintDialog, setFingerprintDialog] = useState<string | null>(null)
+
+  async function handleDownloadCert() {
+    setCertLoading(true)
+    try {
+      const response = await axios({
+        method: 'GET',
+        url: '/api/server/cert',
+        responseType: 'blob',
+        headers: { token: store.get(tokenAtom) },
+      })
+      const blob = response.data as Blob
+      const disposition = response.headers?.['content-disposition']
+      let filename = 'cert.pem'
+      if (disposition) {
+        const match = disposition.match(/filename="?([^"]+)"?/)
+        if (match) filename = match[1]
+      }
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = filename
+      a.click()
+      URL.revokeObjectURL(url)
+    } finally {
+      setCertLoading(false)
+    }
+  }
+
+  async function handleGetFingerprint() {
+    setFingerprintLoading(true)
+    try {
+      const response = await requestWithToken({ method: 'GET', url: '/api/server/fingerprint' })
+      if (response.ok) {
+        setFingerprintDialog(String(response.data))
+      }
+    } finally {
+      setFingerprintLoading(false)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-indigo-50 to-blue-100 px-4 py-10 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950/40">
       <div className="mx-auto w-full max-w-4xl">
@@ -194,6 +240,34 @@ export default function Dashboard() {
               <AddIcon sx={{ fontSize: 18 }} />
               Add Config
             </button>
+            {anyRunning && (
+              <>
+                <button
+                  onClick={handleDownloadCert}
+                  disabled={certLoading}
+                  className="flex items-center gap-1.5 rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+                >
+                  {certLoading ? (
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-indigo-600" />
+                  ) : (
+                    <FileDownloadOutlined sx={{ fontSize: 18 }} />
+                  )}
+                  Cert
+                </button>
+                <button
+                  onClick={handleGetFingerprint}
+                  disabled={fingerprintLoading}
+                  className="flex items-center gap-1.5 rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+                >
+                  {fingerprintLoading ? (
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-indigo-600" />
+                  ) : (
+                    <Fingerprint sx={{ fontSize: 18 }} />
+                  )}
+                  Fingerprint
+                </button>
+              </>
+            )}
           </div>
         </div>
 
@@ -421,6 +495,36 @@ export default function Dashboard() {
                 className="rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm shadow-red-200 transition hover:bg-red-500 active:bg-red-700 disabled:opacity-60 dark:shadow-red-950/50"
               >
                 {deleting ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Fingerprint dialog */}
+      {fingerprintDialog !== null && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setFingerprintDialog(null)} />
+          <div className="relative w-full max-w-md animate-[fadeIn_0.15s_ease-out] rounded-2xl border border-slate-200/70 bg-white p-8 shadow-2xl dark:border-slate-800 dark:bg-slate-900">
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-950/50">
+              <Fingerprint className="text-indigo-600 dark:text-indigo-400" sx={{ fontSize: 22 }} />
+            </div>
+            <h2 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">Certificate Fingerprint</h2>
+            <div className="mt-4 rounded-lg bg-slate-50 px-4 py-3 font-mono text-sm break-all text-slate-700 dark:bg-slate-800/60 dark:text-slate-200">
+              {fingerprintDialog}
+            </div>
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                onClick={() => navigator.clipboard.writeText(fingerprintDialog)}
+                className="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+              >
+                Copy
+              </button>
+              <button
+                onClick={() => setFingerprintDialog(null)}
+                className="rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm shadow-indigo-200 transition hover:bg-indigo-500 active:bg-indigo-700 dark:shadow-indigo-950/50"
+              >
+                Close
               </button>
             </div>
           </div>
