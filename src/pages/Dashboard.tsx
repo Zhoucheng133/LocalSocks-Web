@@ -3,7 +3,9 @@ import {
   Add as AddIcon,
   DeleteOutlined as DeleteOutlineIcon,
   EditOutlined as EditOutlinedIcon,
+  PlayArrowOutlined,
   RefreshOutlined as RefreshOutlinedIcon,
+  StopOutlined,
   TuneRounded
 } from '@mui/icons-material'
 import type { Server } from '../utils/types'
@@ -129,6 +131,38 @@ export default function Dashboard() {
     }
   }
 
+  const [actionId, setActionId] = useState<string | null>(null)
+
+  async function handleRun(server: Server) {
+    setActionId(server.id)
+    try {
+      const response = await requestWithToken({
+        method: 'POST',
+        url: `/api/server/run/${server.id}`,
+      })
+      if (response.ok) {
+        await fetchServers()
+      }
+    } finally {
+      setActionId(null)
+    }
+  }
+
+  async function handleStop(server: Server) {
+    setActionId(server.id)
+    try {
+      const response = await requestWithToken({
+        method: 'POST',
+        url: `/api/server/stop`,
+      })
+      if (response.ok) {
+        await fetchServers()
+      }
+    } finally {
+      setActionId(null)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-indigo-50 to-blue-100 px-4 py-10 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950/40">
       <div className="mx-auto w-full max-w-4xl">
@@ -212,6 +246,33 @@ export default function Dashboard() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-end gap-1">
+                          {server.running ? (
+                            <button
+                              onClick={() => handleStop(server)}
+                              disabled={actionId === server.id}
+                              className="rounded-lg p-2 text-slate-400 transition hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/50 dark:hover:text-red-400 disabled:opacity-50"
+                              aria-label={`Stop ${server.name}`}
+                            >
+                              {actionId === server.id ? (
+                                <span className="h-4.5 w-4.5 animate-spin rounded-full border-2 border-slate-300 border-t-red-600" />
+                              ) : (
+                                <StopOutlined sx={{ fontSize: 18 }} />
+                              )}
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handleRun(server)}
+                              disabled={actionId === server.id}
+                              className="rounded-lg p-2 text-slate-400 transition hover:bg-emerald-50 hover:text-emerald-600 dark:hover:bg-emerald-950/50 dark:hover:text-emerald-400 disabled:opacity-50"
+                              aria-label={`Run ${server.name}`}
+                            >
+                              {actionId === server.id ? (
+                                <span className="h-4.5 w-4.5 animate-spin rounded-full border-2 border-slate-300 border-t-emerald-600" />
+                              ) : (
+                                <PlayArrowOutlined sx={{ fontSize: 18 }} />
+                              )}
+                            </button>
+                          )}
                           <button
                             onClick={() => openEdit(server)}
                             className="rounded-lg p-2 text-slate-400 transition hover:bg-indigo-50 hover:text-indigo-600 dark:hover:bg-indigo-950/50 dark:hover:text-indigo-400"
