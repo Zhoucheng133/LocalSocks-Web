@@ -163,6 +163,8 @@ export default function Dashboard() {
     }
   }
 
+  const anyRunning = servers.some((s) => s.running)
+
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-indigo-50 to-blue-100 px-4 py-10 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950/40">
       <div className="mx-auto w-full max-w-4xl">
@@ -262,7 +264,7 @@ export default function Dashboard() {
                           ) : (
                             <button
                               onClick={() => handleRun(server)}
-                              disabled={actionId === server.id}
+                              disabled={actionId === server.id || anyRunning}
                               className="rounded-lg p-2 text-slate-400 transition hover:bg-emerald-50 hover:text-emerald-600 dark:hover:bg-emerald-950/50 dark:hover:text-emerald-400 disabled:opacity-50"
                               aria-label={`Run ${server.name}`}
                             >
@@ -275,14 +277,16 @@ export default function Dashboard() {
                           )}
                           <button
                             onClick={() => openEdit(server)}
-                            className="rounded-lg p-2 text-slate-400 transition hover:bg-indigo-50 hover:text-indigo-600 dark:hover:bg-indigo-950/50 dark:hover:text-indigo-400"
+                            disabled={server.running}
+                            className="rounded-lg p-2 text-slate-400 transition hover:bg-indigo-50 hover:text-indigo-600 dark:hover:bg-indigo-950/50 dark:hover:text-indigo-400 disabled:opacity-50"
                             aria-label={`Edit ${server.name}`}
                           >
                             <EditOutlinedIcon sx={{ fontSize: 18 }} />
                           </button>
                           <button
                             onClick={() => setDeleteTarget(server)}
-                            className="rounded-lg p-2 text-slate-400 transition hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/50 dark:hover:text-red-400"
+                            disabled={server.running}
+                            className="rounded-lg p-2 text-slate-400 transition hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/50 dark:hover:text-red-400 disabled:opacity-50"
                             aria-label={`Delete ${server.name}`}
                           >
                             <DeleteOutlineIcon sx={{ fontSize: 18 }} />
