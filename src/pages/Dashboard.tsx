@@ -263,7 +263,7 @@ export default function Dashboard() {
               className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:text-indigo-600 hover:shadow disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-400 dark:hover:text-indigo-400 sm:h-10 sm:w-10"
               aria-label="Refresh"
             >
-              <FontAwesomeIcon icon={faArrowsRotate} style={{ fontSize: '18px' }} />
+              <FontAwesomeIcon icon={faArrowsRotate} style={{ fontSize: '14px' }} />
             </button>
           </div>
 
@@ -272,7 +272,7 @@ export default function Dashboard() {
               onClick={openAdd}
               className="flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-2 text-sm font-medium text-white shadow-sm shadow-indigo-200 transition hover:bg-indigo-500 active:bg-indigo-700 dark:shadow-indigo-950/50 sm:px-4 sm:py-2.5"
             >
-              <FontAwesomeIcon icon={faPlus} style={{ fontSize: '18px' }} />
+              <FontAwesomeIcon icon={faPlus} style={{ fontSize: '14px' }} />
               <span className="hidden sm:inline">Add Config</span>
               <span className="sm:hidden">Add</span>
             </button>
@@ -293,7 +293,7 @@ export default function Dashboard() {
                   {certLoading ? (
                     <span className="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-indigo-600" />
                   ) : (
-                    <FontAwesomeIcon icon={faFileArrowDown} style={{ fontSize: '18px' }} />
+                    <FontAwesomeIcon icon={faFileArrowDown} style={{ fontSize: '14px' }} />
                   )}
                   <span className="hidden sm:inline">Cert</span>
                 </button>
@@ -305,7 +305,7 @@ export default function Dashboard() {
                   {fingerprintLoading ? (
                     <span className="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-indigo-600" />
                   ) : (
-                    <FontAwesomeIcon icon={faFingerprint} style={{ fontSize: '18px' }} />
+                    <FontAwesomeIcon icon={faFingerprint} style={{ fontSize: '14px' }} />
                   )}
                   <span className="hidden sm:inline">Fingerprint</span>
                 </button>
@@ -329,7 +329,7 @@ export default function Dashboard() {
             </div>
           ) : servers.length === 0 ? (
             <div className="flex flex-col items-center gap-2 px-6 py-16 text-center">
-              <FontAwesomeIcon icon={faSliders} className='h-10! w-10!' />
+              <FontAwesomeIcon icon={faSliders} className='h-8! w-8!' />
               <p className="text-sm font-medium text-slate-600 dark:text-slate-300">No config yet</p>
               <p className="text-xs text-slate-400 dark:text-slate-500">Click "Add Config" to create your first config.</p>
             </div>
@@ -375,7 +375,7 @@ export default function Dashboard() {
                               {actionId === server.id ? (
                                 <span className="h-4.5 w-4.5 animate-spin rounded-full border-2 border-slate-300 border-t-red-600" />
                               ) : (
-                                <FontAwesomeIcon icon={faStop} style={{ fontSize: '18px' }} />
+                                <FontAwesomeIcon icon={faStop} style={{ fontSize: '14px' }} />
                               )}
                             </button>
                           ) : (
@@ -388,7 +388,7 @@ export default function Dashboard() {
                               {actionId === server.id ? (
                                 <span className="h-4.5 w-4.5 animate-spin rounded-full border-2 border-slate-300 border-t-emerald-600" />
                               ) : (
-                                <FontAwesomeIcon icon={faPlay} style={{ fontSize: '18px' }} />
+                                <FontAwesomeIcon icon={faPlay} style={{ fontSize: '14px' }} />
                               )}
                             </button>
                           )}
@@ -398,7 +398,7 @@ export default function Dashboard() {
                             className="rounded-lg p-2 text-slate-400 transition hover:bg-indigo-50 hover:text-indigo-600 dark:hover:bg-indigo-950/50 dark:hover:text-indigo-400 disabled:opacity-50"
                             aria-label={`Edit ${server.name}`}
                           >
-                            <FontAwesomeIcon icon={faPen} style={{ fontSize: '18px' }} />
+                            <FontAwesomeIcon icon={faPen} style={{ fontSize: '14px' }} />
                           </button>
                           <button
                             onClick={() => setDeleteTarget(server)}
@@ -406,7 +406,7 @@ export default function Dashboard() {
                             className="rounded-lg p-2 text-slate-400 transition hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/50 dark:hover:text-red-400 disabled:opacity-50"
                             aria-label={`Delete ${server.name}`}
                           >
-                            <FontAwesomeIcon icon={faTrash} style={{ fontSize: '18px' }} />
+                            <FontAwesomeIcon icon={faTrash} style={{ fontSize: '14px' }} />
                           </button>
                         </div>
                       </td>
@@ -518,7 +518,7 @@ export default function Dashboard() {
           <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => !deleting && setDeleteTarget(null)} />
           <div className="relative w-full max-w-sm rounded-2xl border border-slate-200/70 bg-white p-8 shadow-2xl dark:border-slate-800 dark:bg-slate-900">
             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-50 dark:bg-red-950/50">
-              <FontAwesomeIcon icon={faTrash} className="text-red-600 dark:text-red-400" style={{ fontSize: '22px' }} />
+              <FontAwesomeIcon icon={faTrash} className="text-red-600 dark:text-red-400" style={{ fontSize: '18px' }} />
             </div>
             <h2 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">Delete server</h2>
             <p className="mt-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
@@ -550,7 +550,7 @@ export default function Dashboard() {
           <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setFingerprintDialog(null)} />
           <div className="relative w-full max-w-md animate-[fadeIn_0.15s_ease-out] rounded-2xl border border-slate-200/70 bg-white p-8 shadow-2xl dark:border-slate-800 dark:bg-slate-900">
             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-950/50">
-              <FontAwesomeIcon icon={faFingerprint} className="text-indigo-600 dark:text-indigo-400" style={{ fontSize: '22px' }} />
+              <FontAwesomeIcon icon={faFingerprint} className="text-indigo-600 dark:text-indigo-400" style={{ fontSize: '18px' }} />
             </div>
             <h2 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">Certificate Fingerprint</h2>
             <div className="mt-4 rounded-lg bg-slate-50 px-4 py-3 font-mono text-sm break-all text-slate-700 dark:bg-slate-800/60 dark:text-slate-200">

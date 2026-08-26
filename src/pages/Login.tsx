@@ -81,9 +81,9 @@ export default function Login() {
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? (
-                    <FontAwesomeIcon icon={faEyeSlash} style={{ fontSize: '20px' }} />
+                    <FontAwesomeIcon icon={faEyeSlash} style={{ fontSize: '16px' }} />
                   ) : (
-                    <FontAwesomeIcon icon={faEye} style={{ fontSize: '20px' }} />
+                    <FontAwesomeIcon icon={faEye} style={{ fontSize: '16px' }} />
                   )}
                 </button>
               </div>
