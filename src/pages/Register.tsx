@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
-import { Visibility, VisibilityOff } from '@mui/icons-material'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 import { register } from '../utils/requests'
 
 export default function Register() {
@@ -85,9 +86,9 @@ export default function Register() {
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? (
-                    <VisibilityOff sx={{ fontSize: 20 }} />
+                    <FontAwesomeIcon icon={faEyeSlash} style={{ fontSize: '20px' }} />
                   ) : (
-                    <Visibility sx={{ fontSize: 20 }} />
+                    <FontAwesomeIcon icon={faEye} style={{ fontSize: '20px' }} />
                   )}
                 </button>
               </div>
