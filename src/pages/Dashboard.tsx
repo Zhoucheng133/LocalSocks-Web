@@ -14,6 +14,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import type { Server } from '../utils/types'
 import { requestWithToken, store, tokenAtom } from '../utils/requests'
+import copy from 'copy-to-clipboard';
 
 interface ServerForm {
   name: string
@@ -558,7 +559,7 @@ export default function Dashboard() {
             </div>
             <div className="mt-6 flex justify-end gap-3">
               <button
-                onClick={() => navigator.clipboard.writeText(fingerprintDialog)}
+                onClick={() => copy(fingerprintDialog)}
                 className="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
               >
                 Copy
