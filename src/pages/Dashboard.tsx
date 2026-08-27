@@ -12,7 +12,8 @@ import {
   faArrowsRotate,
   faStop,
   faSliders,
-  faRightFromBracket
+  faRightFromBracket,
+  faKey
 } from '@fortawesome/free-solid-svg-icons'
 import type { Server } from '../utils/types'
 import { requestWithToken, store, tokenAtom } from '../utils/requests'
@@ -279,6 +280,14 @@ export default function Dashboard() {
             </div>
 
             <div className="flex items-center gap-2">
+              <button
+                onClick={() => navigate('/change-password')}
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:text-indigo-600 hover:shadow dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-400 dark:hover:text-indigo-400 sm:h-10 sm:w-10"
+                aria-label="Change Password"
+                title="Change Password"
+              >
+                <FontAwesomeIcon icon={faKey} style={{ fontSize: '14px' }} />
+              </button>
               <button
                 onClick={handleRefresh}
                 disabled={loading}

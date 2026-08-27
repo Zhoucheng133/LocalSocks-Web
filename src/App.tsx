@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router'
 import Dashboard from './pages/Dashboard'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import ChangePassword from './pages/ChangePassword'
 import { useEffect } from 'react'
 import AuthProvider from './components/AuthProvider'
 
@@ -50,6 +51,7 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/change-password" element={<ChangePassword />} />
       </Routes>
     </AuthProvider>
   )
