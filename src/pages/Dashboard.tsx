@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import axios from 'axios'
+import { useNavigate } from 'react-router'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faPlus,
@@ -10,7 +11,8 @@ import {
   faPlay,
   faArrowsRotate,
   faStop,
-  faSliders
+  faSliders,
+  faRightFromBracket
 } from '@fortawesome/free-solid-svg-icons'
 import type { Server } from '../utils/types'
 import { requestWithToken, store, tokenAtom } from '../utils/requests'
@@ -29,6 +31,7 @@ const inputClass =
   'w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-400/20'
 
 export default function Dashboard() {
+  const navigate = useNavigate()
   const [servers, setServers] = useState<Server[]>([])
   const [loading, setLoading] = useState(true)
   const [pageError, setPageError] = useState('')
@@ -65,6 +68,17 @@ export default function Dashboard() {
   function handleRefresh() {
     setLoading(true)
     fetchServers()
+  }
+
+  async function handleLogout() {
+    try {
+      await requestWithToken({ method: 'POST', url: '/api/user/logout' })
+    } catch {
+      // ignore
+    }
+    localStorage.removeItem('token')
+    store.set(tokenAtom, '')
+    navigate('/login', { replace: true })
   }
 
   function openAdd() {
@@ -258,14 +272,25 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <button
-              onClick={handleRefresh}
-              disabled={loading}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:text-indigo-600 hover:shadow disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-400 dark:hover:text-indigo-400 sm:h-10 sm:w-10"
-              aria-label="Refresh"
-            >
-              <FontAwesomeIcon icon={faArrowsRotate} style={{ fontSize: '14px' }} />
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleRefresh}
+                disabled={loading}
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:text-indigo-600 hover:shadow disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-400 dark:hover:text-indigo-400 sm:h-10 sm:w-10"
+                aria-label="Refresh"
+                title="Refresh"
+              >
+                <FontAwesomeIcon icon={faArrowsRotate} style={{ fontSize: '14px' }} />
+              </button>
+              <button
+                onClick={handleLogout}
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:text-red-600 hover:shadow dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-400 dark:hover:text-red-400 sm:h-10 sm:w-10"
+                aria-label="Logout"
+                title="Logout"
+              >
+                <FontAwesomeIcon icon={faRightFromBracket} style={{ fontSize: '14px' }} />
+              </button>
+            </div>
           </div>
 
           <div className="mt-3 flex flex-wrap items-center gap-2">
