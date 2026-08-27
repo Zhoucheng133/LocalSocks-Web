@@ -44,6 +44,8 @@ export default function Dashboard() {
 
   const [deleteTarget, setDeleteTarget] = useState<Server | null>(null)
   const [deleting, setDeleting] = useState(false)
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false)
+  const [loggingOut, setLoggingOut] = useState(false)
 
   const fetchServers = useCallback(async () => {
     try {
@@ -71,14 +73,18 @@ export default function Dashboard() {
   }
 
   async function handleLogout() {
+    setLoggingOut(true)
     try {
       await requestWithToken({ method: 'POST', url: '/api/user/logout' })
     } catch {
       // ignore
+    } finally {
+      setLoggingOut(false)
+      setShowLogoutDialog(false)
+      localStorage.removeItem('token')
+      store.set(tokenAtom, '')
+      navigate('/login', { replace: true })
     }
-    localStorage.removeItem('token')
-    store.set(tokenAtom, '')
-    navigate('/login', { replace: true })
   }
 
   function openAdd() {
@@ -283,7 +289,7 @@ export default function Dashboard() {
                 <FontAwesomeIcon icon={faArrowsRotate} style={{ fontSize: '14px' }} />
               </button>
               <button
-                onClick={handleLogout}
+                onClick={() => setShowLogoutDialog(true)}
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:text-red-600 hover:shadow dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-400 dark:hover:text-red-400 sm:h-10 sm:w-10"
                 aria-label="Logout"
                 title="Logout"
@@ -594,6 +600,38 @@ export default function Dashboard() {
                 className="rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm shadow-indigo-200 transition hover:bg-indigo-500 active:bg-indigo-700 dark:shadow-indigo-950/50"
               >
                 Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Logout confirmation dialog */}
+      {showLogoutDialog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => !loggingOut && setShowLogoutDialog(false)} />
+          <div className="relative w-full max-w-sm rounded-2xl border border-slate-200/70 bg-white p-8 shadow-2xl dark:border-slate-800 dark:bg-slate-900">
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-950/50">
+              <FontAwesomeIcon icon={faRightFromBracket} className="text-indigo-600 dark:text-indigo-400" style={{ fontSize: '18px' }} />
+            </div>
+            <h2 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">Sign out</h2>
+            <p className="mt-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
+              Are you sure you want to sign out of your account?
+            </p>
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                onClick={() => setShowLogoutDialog(false)}
+                disabled={loggingOut}
+                className="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 disabled:opacity-60 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleLogout}
+                disabled={loggingOut}
+                className="rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm shadow-indigo-200 transition hover:bg-indigo-500 active:bg-indigo-700 disabled:opacity-60 dark:shadow-indigo-950/50"
+              >
+                {loggingOut ? 'Signing out...' : 'Sign out'}
               </button>
             </div>
           </div>
