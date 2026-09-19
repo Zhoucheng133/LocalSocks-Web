@@ -58,11 +58,11 @@ export default function Dashboard() {
         setPageError(String(response.data))
       }
     } catch {
-      setPageError('Failed to load server list')
+      setPageError(t('dashboard.errorLoadList'))
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [t])
 
   useEffect(() => {
     fetchServers()
