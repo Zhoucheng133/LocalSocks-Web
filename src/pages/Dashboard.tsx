@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, useRef } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router'
+import { useTranslation } from 'react-i18next'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faPlus,
@@ -13,7 +14,8 @@ import {
   faStop,
   faSliders,
   faRightFromBracket,
-  faKey
+  faKey,
+  faGlobe
 } from '@fortawesome/free-solid-svg-icons'
 import type { Server } from '../utils/types'
 import { requestWithToken, store, tokenAtom } from '../utils/requests'
@@ -32,6 +34,7 @@ const inputClass =
   'w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-400/20'
 
 export default function Dashboard() {
+  const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const [servers, setServers] = useState<Server[]>([])
   const [loading, setLoading] = useState(true)
@@ -47,6 +50,24 @@ export default function Dashboard() {
   const [deleting, setDeleting] = useState(false)
   const [showLogoutDialog, setShowLogoutDialog] = useState(false)
   const [loggingOut, setLoggingOut] = useState(false)
+
+  const [showLangMenu, setShowLangMenu] = useState(false)
+  const langMenuRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (langMenuRef.current && !langMenuRef.current.contains(event.target as Node)) {
+        setShowLangMenu(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng)
+    setShowLangMenu(false)
+  }
 
   const fetchServers = useCallback(async () => {
     try {
@@ -109,11 +130,11 @@ export default function Dashboard() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!form.name.trim() || !form.username.trim() || !form.host.trim()) {
-      setFormError('Please fill in name, username and host')
+      setFormError(t('dashboard.errorFillFields'))
       return
     }
     if (dialogMode === 'add' && !form.password) {
-      setFormError('Please enter a password')
+      setFormError(t('dashboard.errorPasswordRequired'))
       return
     }
     setSubmitting(true)
@@ -134,7 +155,7 @@ export default function Dashboard() {
         setFormError(String(response.data))
       }
     } catch {
-      setFormError('Request failed, please try again')
+      setFormError(t('dashboard.errorRequestFailed'))
     } finally {
       setSubmitting(false)
     }
@@ -274,17 +295,59 @@ export default function Dashboard() {
             <div className="flex items-center gap-3">
               <img src="/icon.svg" className='flex h-9 w-9 shrink-0 items-center justify-center sm:h-11 sm:w-11' draggable={false} />
               <div>
-                <h1 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white sm:text-xl">LocalSocks</h1>
-                <p className="text-[10px] text-slate-500 dark:text-slate-400 sm:text-xs">Manage your proxy configs</p>
+                <h1 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white sm:text-xl">{t('common.appName')}</h1>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 sm:text-xs">{t('common.appDesc')}</p>
               </div>
             </div>
 
             <div className="flex items-center gap-2">
+              {/* Language Switcher Dropdown */}
+              <div className="relative" ref={langMenuRef}>
+                <button
+                  onClick={() => setShowLangMenu(!showLangMenu)}
+                  className="flex h-9 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 text-slate-500 shadow-sm transition hover:text-indigo-600 hover:shadow dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-400 dark:hover:text-indigo-400 sm:h-10"
+                  aria-label="Language"
+                  title="Language"
+                >
+                  <FontAwesomeIcon icon={faGlobe} style={{ fontSize: '14px' }} />
+                  <span className="hidden text-xs sm:inline">{i18n.language === 'zh_CN' ? '简体中文' : i18n.language === 'zh_TW' ? '繁體中文' : 'English'}</span>
+                </button>
+
+                {showLangMenu && (
+                  <div className="absolute right-0 mt-2 w-36 rounded-lg border border-slate-200 bg-white py-1 shadow-lg dark:border-slate-700 dark:bg-slate-800 z-50">
+                    <button
+                      onClick={() => changeLanguage('zh_CN')}
+                      className={`w-full px-4 py-2 text-left text-xs transition hover:bg-slate-100 dark:hover:bg-slate-700 ${
+                        i18n.language === 'zh_CN' ? 'font-semibold text-indigo-600 dark:text-indigo-400' : 'text-slate-700 dark:text-slate-300'
+                      }`}
+                    >
+                      简体中文
+                    </button>
+                    <button
+                      onClick={() => changeLanguage('zh_TW')}
+                      className={`w-full px-4 py-2 text-left text-xs transition hover:bg-slate-100 dark:hover:bg-slate-700 ${
+                        i18n.language === 'zh_TW' ? 'font-semibold text-indigo-600 dark:text-indigo-400' : 'text-slate-700 dark:text-slate-300'
+                      }`}
+                    >
+                      繁體中文
+                    </button>
+                    <button
+                      onClick={() => changeLanguage('en_US')}
+                      className={`w-full px-4 py-2 text-left text-xs transition hover:bg-slate-100 dark:hover:bg-slate-700 ${
+                        i18n.language === 'en_US' ? 'font-semibold text-indigo-600 dark:text-indigo-400' : 'text-slate-700 dark:text-slate-300'
+                      }`}
+                    >
+                      English
+                    </button>
+                  </div>
+                )}
+              </div>
+
               <button
                 onClick={() => navigate('/change-password')}
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:text-indigo-600 hover:shadow dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-400 dark:hover:text-indigo-400 sm:h-10 sm:w-10"
-                aria-label="Change Password"
-                title="Change Password"
+                aria-label={t('common.changePassword')}
+                title={t('common.changePassword')}
               >
                 <FontAwesomeIcon icon={faKey} style={{ fontSize: '14px' }} />
               </button>
@@ -292,16 +355,16 @@ export default function Dashboard() {
                 onClick={handleRefresh}
                 disabled={loading}
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:text-indigo-600 hover:shadow disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-400 dark:hover:text-indigo-400 sm:h-10 sm:w-10"
-                aria-label="Refresh"
-                title="Refresh"
+                aria-label={t('common.refresh')}
+                title={t('common.refresh')}
               >
                 <FontAwesomeIcon icon={faArrowsRotate} style={{ fontSize: '14px' }} />
               </button>
               <button
                 onClick={() => setShowLogoutDialog(true)}
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:text-red-600 hover:shadow dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-400 dark:hover:text-red-400 sm:h-10 sm:w-10"
-                aria-label="Logout"
-                title="Logout"
+                aria-label={t('common.logout')}
+                title={t('common.logout')}
               >
                 <FontAwesomeIcon icon={faRightFromBracket} style={{ fontSize: '14px' }} />
               </button>
@@ -314,15 +377,15 @@ export default function Dashboard() {
               className="flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-2 text-sm font-medium text-white shadow-sm shadow-indigo-200 transition hover:bg-indigo-500 active:bg-indigo-700 dark:shadow-indigo-950/50 sm:px-4 sm:py-2.5"
             >
               <FontAwesomeIcon icon={faPlus} style={{ fontSize: '14px' }} />
-              <span className="hidden sm:inline">Add Config</span>
-              <span className="sm:hidden">Add</span>
+              <span className="hidden sm:inline">{t('common.addConfig')}</span>
+              <span className="sm:hidden">{t('common.add')}</span>
             </button>
             {anyRunning && (
               <>
                 {certRemain !== null && (
                   <span className="flex items-center gap-1.5 rounded-lg border border-slate-200 px-2.5 py-2 text-xs font-medium text-slate-500 dark:border-slate-700 dark:text-slate-400 sm:px-3 sm:py-2.5">
                     <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${certRemain < 86400 ? 'bg-amber-500' : 'bg-emerald-500'}`} />
-                    <span className="hidden sm:inline">Cert: </span>
+                    <span className="hidden sm:inline">{t('common.cert')}: </span>
                     {formatRemain(certRemain)}
                   </span>
                 )}
@@ -336,7 +399,7 @@ export default function Dashboard() {
                   ) : (
                     <FontAwesomeIcon icon={faFileArrowDown} style={{ fontSize: '14px' }} />
                   )}
-                  <span className="hidden sm:inline">Cert</span>
+                  <span className="hidden sm:inline">{t('common.cert')}</span>
                 </button>
                 <button
                   onClick={handleGetFingerprint}
@@ -348,7 +411,7 @@ export default function Dashboard() {
                   ) : (
                     <FontAwesomeIcon icon={faFingerprint} style={{ fontSize: '14px' }} />
                   )}
-                  <span className="hidden sm:inline">Fingerprint</span>
+                  <span className="hidden sm:inline">{t('common.fingerprint')}</span>
                 </button>
               </>
             )}
@@ -366,24 +429,24 @@ export default function Dashboard() {
           {loading ? (
             <div className="flex items-center justify-center gap-3 px-6 py-16 text-sm text-slate-500 dark:text-slate-400">
               <span className="h-5 w-5 animate-spin rounded-full border-2 border-slate-300 border-t-indigo-600 dark:border-slate-700 dark:border-t-indigo-400" />
-              Loading servers...
+              {t('common.loading')}
             </div>
           ) : servers.length === 0 ? (
             <div className="flex flex-col items-center gap-2 px-6 py-16 text-center">
               <FontAwesomeIcon icon={faSliders} className='h-8! w-8!' />
-              <p className="text-sm font-medium text-slate-600 dark:text-slate-300">No config yet</p>
-              <p className="text-xs text-slate-400 dark:text-slate-500">Click "Add Config" to create your first config.</p>
+              <p className="text-sm font-medium text-slate-600 dark:text-slate-300">{t('dashboard.noConfigTitle')}</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500">{t('dashboard.noConfigDesc')}</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
                 <thead>
                   <tr className="border-b border-slate-200/70 text-xs tracking-wider text-slate-400 uppercase dark:border-slate-800 dark:text-slate-500">
-                    <th className="px-6 py-4 font-medium">Name</th>
-                    <th className="px-6 py-4 font-medium">Username</th>
-                    <th className="px-6 py-4 font-medium">Host</th>
-                    <th className="px-6 py-4 font-medium">Status</th>
-                    <th className="px-6 py-4 text-right font-medium">Actions</th>
+                    <th className="px-6 py-4 font-medium">{t('common.name')}</th>
+                    <th className="px-6 py-4 font-medium">{t('common.username')}</th>
+                    <th className="px-6 py-4 font-medium">{t('common.host')}</th>
+                    <th className="px-6 py-4 font-medium">{t('common.status')}</th>
+                    <th className="px-6 py-4 text-right font-medium">{t('common.actions')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
@@ -401,7 +464,7 @@ export default function Dashboard() {
                           }`}
                         >
                           <span className={`h-1.5 w-1.5 rounded-full ${server.running ? 'animate-pulse bg-emerald-500' : 'bg-slate-400'}`} />
-                          {server.running ? 'Running' : 'Stopped'}
+                          {server.running ? t('common.running') : t('common.stopped')}
                         </span>
                       </td>
                       <td className="px-6 py-4">
@@ -466,7 +529,7 @@ export default function Dashboard() {
           <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={closeDialog} />
           <div className="relative w-full max-w-md animate-[fadeIn_0.15s_ease-out] rounded-2xl border border-slate-200/70 bg-white p-8 shadow-2xl dark:border-slate-800 dark:bg-slate-900">
             <h2 className="mb-6 text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
-              {dialogMode === 'add' ? 'Add Config' : 'Edit Config'}
+              {dialogMode === 'add' ? t('dashboard.addDialogTitle') : t('dashboard.editDialogTitle')}
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-4" noValidate>
@@ -476,35 +539,35 @@ export default function Dashboard() {
 
               <div>
                 <label htmlFor="server-name" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
-                  Name
+                  {t('common.name')}
                 </label>
                 <input
                   id="server-name"
                   type="text"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  placeholder="My config"
+                  placeholder={t('dashboard.namePlaceholder')}
                   className={inputClass}
                 />
               </div>
 
               <div>
                 <label htmlFor="server-host" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
-                  Host
+                  {t('common.host')}
                 </label>
                 <input
                   id="server-host"
                   type="text"
                   value={form.host}
                   onChange={(e) => setForm({ ...form, host: e.target.value })}
-                  placeholder="example.com"
+                  placeholder={t('dashboard.hostPlaceholder')}
                   className={inputClass}
                 />
               </div>
 
               <div>
                 <label htmlFor="server-username" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
-                  Username
+                  {t('common.username')}
                 </label>
                 <input
                   id="server-username"
@@ -512,14 +575,14 @@ export default function Dashboard() {
                   autoComplete="off"
                   value={form.username}
                   onChange={(e) => setForm({ ...form, username: e.target.value })}
-                  placeholder="Username"
+                  placeholder={t('common.username')}
                   className={inputClass}
                 />
               </div>
 
               <div>
                 <label htmlFor="server-password" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
-                  Password{dialogMode === 'edit' && <span className="ml-1 text-xs font-normal text-slate-400">(leave blank to keep)</span>}
+                  {t('common.password')}{dialogMode === 'edit' && <span className="ml-1 text-xs font-normal text-slate-400">{t('common.optionalPassword')}</span>}
                 </label>
                 <input
                   id="server-password"
@@ -527,7 +590,7 @@ export default function Dashboard() {
                   autoComplete="new-password"
                   value={form.password}
                   onChange={(e) => setForm({ ...form, password: e.target.value })}
-                  placeholder={dialogMode === 'edit' ? '••••••••' : 'Password'}
+                  placeholder={dialogMode === 'edit' ? '••••••••' : t('common.password')}
                   className={inputClass}
                 />
               </div>
@@ -538,14 +601,14 @@ export default function Dashboard() {
                   onClick={closeDialog}
                   className="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
                   className="rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm shadow-indigo-200 transition hover:bg-indigo-500 active:bg-indigo-700 disabled:opacity-60 dark:shadow-indigo-950/50"
                 >
-                  {submitting ? 'Saving...' : dialogMode === 'add' ? 'Add' : 'Save'}
+                  {submitting ? t('common.loading') : dialogMode === 'add' ? t('common.add') : t('common.save')}
                 </button>
               </div>
             </form>
@@ -561,9 +624,9 @@ export default function Dashboard() {
             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-50 dark:bg-red-950/50">
               <FontAwesomeIcon icon={faTrash} className="text-red-600 dark:text-red-400" style={{ fontSize: '18px' }} />
             </div>
-            <h2 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">Delete server</h2>
+            <h2 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">{t('dashboard.deleteConfirmTitle')}</h2>
             <p className="mt-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
-              Are you sure you want to delete <span className="font-medium text-slate-700 dark:text-slate-200">{deleteTarget.name}</span>? This action cannot be undone.
+              {t('dashboard.deleteConfirmDesc')} <span className="font-medium text-slate-700 dark:text-slate-200">{deleteTarget.name}</span>{t('dashboard.deleteConfirmWarning')}
             </p>
             <div className="mt-6 flex justify-end gap-3">
               <button
@@ -571,14 +634,14 @@ export default function Dashboard() {
                 disabled={deleting}
                 className="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 disabled:opacity-60 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 onClick={handleDelete}
                 disabled={deleting}
                 className="rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm shadow-red-200 transition hover:bg-red-500 active:bg-red-700 disabled:opacity-60 dark:shadow-red-950/50"
               >
-                {deleting ? 'Deleting...' : 'Delete'}
+                {deleting ? t('common.loading') : t('common.delete')}
               </button>
             </div>
           </div>
@@ -593,7 +656,7 @@ export default function Dashboard() {
             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-950/50">
               <FontAwesomeIcon icon={faFingerprint} className="text-indigo-600 dark:text-indigo-400" style={{ fontSize: '18px' }} />
             </div>
-            <h2 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">Certificate Fingerprint</h2>
+            <h2 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">{t('dashboard.fingerprintTitle')}</h2>
             <div className="mt-4 rounded-lg bg-slate-50 px-4 py-3 font-mono text-sm break-all text-slate-700 dark:bg-slate-800/60 dark:text-slate-200">
               {fingerprintDialog}
             </div>
@@ -602,13 +665,13 @@ export default function Dashboard() {
                 onClick={() => copy(fingerprintDialog)}
                 className="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
               >
-                Copy
+                {t('common.copy')}
               </button>
               <button
                 onClick={() => setFingerprintDialog(null)}
                 className="rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm shadow-indigo-200 transition hover:bg-indigo-500 active:bg-indigo-700 dark:shadow-indigo-950/50"
               >
-                Close
+                {t('common.close')}
               </button>
             </div>
           </div>
@@ -623,9 +686,9 @@ export default function Dashboard() {
             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-950/50">
               <FontAwesomeIcon icon={faRightFromBracket} className="text-indigo-600 dark:text-indigo-400" style={{ fontSize: '18px' }} />
             </div>
-            <h2 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">Sign out</h2>
+            <h2 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">{t('dashboard.logoutTitle')}</h2>
             <p className="mt-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
-              Are you sure you want to sign out of your account?
+              {t('dashboard.logoutDesc')}
             </p>
             <div className="mt-6 flex justify-end gap-3">
               <button
@@ -633,14 +696,14 @@ export default function Dashboard() {
                 disabled={loggingOut}
                 className="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 disabled:opacity-60 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 onClick={handleLogout}
                 disabled={loggingOut}
                 className="rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm shadow-indigo-200 transition hover:bg-indigo-500 active:bg-indigo-700 disabled:opacity-60 dark:shadow-indigo-950/50"
               >
-                {loggingOut ? 'Signing out...' : 'Sign out'}
+                {loggingOut ? t('common.loading') : t('common.logout')}
               </button>
             </div>
           </div>

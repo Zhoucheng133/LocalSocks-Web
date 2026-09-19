@@ -1,10 +1,12 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router'
+import { useTranslation } from 'react-i18next'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEye, faEyeSlash, faArrowLeft } from '@fortawesome/free-solid-svg-icons'
+import { faArrowLeft, faGlobe } from '@fortawesome/free-solid-svg-icons'
 import { requestWithToken, store, tokenAtom } from '../utils/requests'
 
 export default function ChangePassword() {
+  const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const [oldPassword, setOldPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
@@ -13,15 +15,32 @@ export default function ChangePassword() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
+  const [showLangMenu, setShowLangMenu] = useState(false)
+  const langMenuRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (langMenuRef.current && !langMenuRef.current.contains(event.target as Node)) {
+        setShowLangMenu(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng)
+    setShowLangMenu(false)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!oldPassword || !newPassword || !confirmPassword) {
-      setError('Please fill in all password fields')
+      setError(t('changePassword.errorFill'))
       return
     }
     if (newPassword !== confirmPassword) {
-      setError('New passwords do not match')
+      setError(t('changePassword.errorMismatch'))
       return
     }
     setError('')
@@ -38,7 +57,7 @@ export default function ChangePassword() {
         },
       })
       if (response.ok) {
-        setSuccess('Password changed successfully! Please log in again.')
+        setSuccess(t('changePassword.successMessage'))
         setTimeout(() => {
           localStorage.removeItem('token')
           store.set(tokenAtom, '')
@@ -48,7 +67,7 @@ export default function ChangePassword() {
         setError(String(response.data))
       }
     } catch {
-      setError('Failed to change password, please try again')
+      setError(t('changePassword.errorFailed'))
     } finally {
       setLoading(false)
     }
@@ -56,6 +75,47 @@ export default function ChangePassword() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-slate-50 via-indigo-50 to-blue-100 px-4 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950/40">
+      {/* Language Switcher Button on Top Right */}
+      <div className="absolute top-6 right-6" ref={langMenuRef}>
+        <button
+          onClick={() => setShowLangMenu(!showLangMenu)}
+          className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-600 shadow-sm transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+          aria-label="Select Language"
+        >
+          <FontAwesomeIcon icon={faGlobe} style={{ fontSize: '14px' }} />
+          <span>{i18n.language === 'zh_CN' ? '简体中文' : i18n.language === 'zh_TW' ? '繁體中文' : 'English'}</span>
+        </button>
+
+        {showLangMenu && (
+          <div className="absolute right-0 mt-2 w-36 rounded-lg border border-slate-200 bg-white py-1 shadow-lg dark:border-slate-700 dark:bg-slate-800">
+            <button
+              onClick={() => changeLanguage('zh_CN')}
+              className={`w-full px-4 py-2 text-left text-sm transition hover:bg-slate-100 dark:hover:bg-slate-700 ${
+                i18n.language === 'zh_CN' ? 'font-semibold text-indigo-600 dark:text-indigo-400' : 'text-slate-700 dark:text-slate-300'
+              }`}
+            >
+              简体中文
+            </button>
+            <button
+              onClick={() => changeLanguage('zh_TW')}
+              className={`w-full px-4 py-2 text-left text-sm transition hover:bg-slate-100 dark:hover:bg-slate-700 ${
+                i18n.language === 'zh_TW' ? 'font-semibold text-indigo-600 dark:text-indigo-400' : 'text-slate-700 dark:text-slate-300'
+              }`}
+            >
+              繁體中文
+            </button>
+            <button
+              onClick={() => changeLanguage('en_US')}
+              className={`w-full px-4 py-2 text-left text-sm transition hover:bg-slate-100 dark:hover:bg-slate-700 ${
+                i18n.language === 'en_US' ? 'font-semibold text-indigo-600 dark:text-indigo-400' : 'text-slate-700 dark:text-slate-300'
+              }`}
+            >
+              English
+            </button>
+          </div>
+        )}
+      </div>
+
       <div className="w-full max-w-md">
         <div className="rounded-2xl border border-slate-200/70 bg-white p-8 shadow-xl shadow-slate-200/60 dark:border-slate-800 dark:bg-slate-900 dark:shadow-black/40">
           <div className="mb-6 flex items-center justify-between">
@@ -64,14 +124,14 @@ export default function ChangePassword() {
               className="flex items-center gap-2 text-sm font-medium text-slate-500 transition hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
             >
               <FontAwesomeIcon icon={faArrowLeft} />
-              Back to Dashboard
+              {t('changePassword.back')}
             </button>
             <img src="/icon.svg" className="flex h-8 w-8" draggable={false} />
           </div>
 
           <div className="mb-8">
-            <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">Change Password</h1>
-            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Enter your old password and new password</p>
+            <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">{t('changePassword.title')}</h1>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{t('changePassword.subtitle')}</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5" noValidate>
@@ -84,7 +144,7 @@ export default function ChangePassword() {
 
             <div>
               <label htmlFor="old-password" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
-                Old Password
+                {t('changePassword.oldPassword')}
               </label>
               <input
                 id="old-password"
@@ -99,7 +159,7 @@ export default function ChangePassword() {
 
             <div>
               <label htmlFor="new-password" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
-                New Password
+                {t('changePassword.newPassword')}
               </label>
               <input
                 id="new-password"
@@ -114,7 +174,7 @@ export default function ChangePassword() {
 
             <div>
               <label htmlFor="confirm-password" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
-                Confirm New Password
+                {t('changePassword.confirmPassword')}
               </label>
               <div className="relative">
                 <input
@@ -126,18 +186,6 @@ export default function ChangePassword() {
                   placeholder="••••••••"
                   className="w-full rounded-lg border border-slate-300 px-4 py-2.5 pr-11 text-sm text-slate-900 placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-400/20"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 flex items-center px-3 text-slate-400 transition hover:text-slate-600 dark:hover:text-slate-300"
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
-                >
-                  {showPassword ? (
-                    <FontAwesomeIcon icon={faEyeSlash} style={{ fontSize: '16px' }} />
-                  ) : (
-                    <FontAwesomeIcon icon={faEye} style={{ fontSize: '16px' }} />
-                  )}
-                </button>
               </div>
             </div>
 
@@ -146,7 +194,7 @@ export default function ChangePassword() {
               disabled={loading}
               className="w-full rounded-lg bg-indigo-600 py-2.5 text-sm font-medium text-white shadow-sm shadow-indigo-200 transition hover:bg-indigo-500 focus:ring-2 focus:ring-indigo-500/40 focus:ring-offset-2 focus:outline-none active:bg-indigo-700 disabled:opacity-60 dark:shadow-indigo-950/50 dark:focus:ring-indigo-400/40 dark:focus:ring-offset-slate-900"
             >
-              {loading ? 'Saving...' : 'Update Password'}
+              {loading ? t('common.loading') : t('changePassword.submitButton')}
             </button>
           </form>
         </div>
